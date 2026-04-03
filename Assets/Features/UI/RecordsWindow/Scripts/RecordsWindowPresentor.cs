@@ -82,6 +82,7 @@ namespace Assets.Features.UI.RecordsWindow.Scripts
             {
                 var view = _recordDataViewSpawner.Spawn(new RecordDataViewProtocol(record.Value.ToString(), record.Date.ToString()));
                 view.RectTransform.SetParent(_window.ContentTransform);
+                view.RectTransform.localScale = Vector2.one;
                 _views.Add(record.Date, view);
             }
         }

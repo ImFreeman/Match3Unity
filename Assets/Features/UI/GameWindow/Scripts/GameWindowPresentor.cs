@@ -172,6 +172,7 @@ public class GameWindowPresentor : IDisposable
             var sprite = GetTileSprite(tile.Type);
             var instance = _tileViewSpawner.Spawn(new UIGraphicElementProtocol(sprite, GetTileSize()));
             instance.RectTransform.SetParent(_gameWindow.TilesContainer);
+            instance.RectTransform.localScale = Vector2.one;
             if (!_viewStorage.TryAdd(e,instance))
             {
                 throw new Exception("Tile view with this id already exsist");
