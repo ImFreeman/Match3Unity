@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Features.Core.ServiceLocatorScript
 {
     public static class ServiceLocator
     {
-        private static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
+        private static readonly Dictionary<Type, IDisposable> _services = new Dictionary<Type, IDisposable>();
 
-        public static void Register<T>(T service) where T : class
+        public static void Register<T>(T service) where T : IDisposable
         {
             var type = typeof(T);
             if (_services.ContainsKey(type))
@@ -51,6 +48,10 @@ namespace Assets.Features.Core.ServiceLocatorScript
 
         public static void Clear()
         {
+            foreach (var disposable in _services.Values)
+            {
+                disposable.Dispose();
+            }
             _services.Clear();
         }
     }

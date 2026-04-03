@@ -2,7 +2,6 @@ using Assets.Features.UI.Scripts.Realization;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class UIService : IUIService
@@ -22,7 +21,7 @@ public class UIService : IUIService
 
     public void Dispose()
     {
-        UnityEngine.Object.Destroy(_deactiveContainer);
+        UnityEngine.Object.Destroy(_deactiveContainer.gameObject);
 
         _activeContainer = null;
         foreach(var window in _windows.Values)
@@ -51,7 +50,6 @@ public class UIService : IUIService
         Show(window);
 
         var component = window.GetComponent<T>();
-        component.Show();
         return component;
     }
 
@@ -65,10 +63,9 @@ public class UIService : IUIService
         Hide(_windows[typeof(T)]);        
     }
     
-    private async UniTask<IEnumerable<UIWindow>> GetWindows(string windowsPoolNames)
+    private UniTask<IEnumerable<UIWindow>> GetWindows(string windowsPoolNames)
     {
-        //TODO: adressables
-        return Resources.LoadAll<UIWindow>(windowsPoolNames);
+        return new UniTask<IEnumerable<UIWindow>>(Resources.LoadAll<UIWindow>(windowsPoolNames));
     }
 
     private void Show(UIWindow window)
@@ -78,8 +75,8 @@ public class UIService : IUIService
         window.RectTransform.localRotation = Quaternion.identity;
         window.RectTransform.localPosition = Vector3.zero;
 
-        //window.RectTransform.offsetMin = Vector2.zero;
-        //window.RectTransform.offsetMax = Vector2.zero;
+        window.RectTransform.offsetMin = Vector2.zero;
+        window.RectTransform.offsetMax = Vector2.zero;
         window.Show();
     }
 

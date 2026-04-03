@@ -23,7 +23,6 @@ namespace Assets.Features.UI.Scripts.Commands
         }
         public void Cancel()
         {
-            //TODO: add cancel
         }        
 
         public async UniTask<CommandResult> Do()

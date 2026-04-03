@@ -1,11 +1,13 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
-using System.Numerics;
+using UnityEngine;
+
 
 namespace Assets.Features.Tile.Scripts.Interfaces
 {
-    public interface ITileResolver
+    public interface ITileResolver : IDisposable
     {
-        public UniTask<IEnumerable<Vector2>> Resolve(Vector2 coords);
+        public UniTask<IEnumerable<Vector2Int>> Resolve(Vector2Int coords);
     }
 }

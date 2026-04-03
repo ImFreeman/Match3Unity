@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 namespace Assets.Features.Core.Bootstrapper.Realization
 {
@@ -85,6 +86,7 @@ namespace Assets.Features.Core.Bootstrapper.Realization
                     }
                     catch (Exception ex)
                     {
+                        Debug.LogError(ex);
                         result = new CommandResult { Status = CommandStatus.Failed, Body = ex };
                         OnCommandExecuted(command, result);
                         break;

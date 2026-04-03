@@ -9,7 +9,6 @@ namespace Assets.Features.Tile.Scripts.Interfaces
     public interface ITileSpawner<TModel> : IDisposable
         where TModel : ITileModel
     {
-        public void SetMaxSize(int count);
         public void Despawn(TModel model);
     }
 
