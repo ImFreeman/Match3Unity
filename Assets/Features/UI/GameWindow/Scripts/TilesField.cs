@@ -11,15 +11,11 @@ namespace Assets.Features.UI.GameWindow.Scripts
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _background;
         [SerializeField] private Color _firstColor;
-        [SerializeField] private Color _secondColor;
-
-        private void Start()
-        {
-            GenerateBackgroundTexture(new Vector2Int(8, 8), 100);
-        }
+        [SerializeField] private Color _secondColor;        
 
         public void GenerateBackgroundTexture(Vector2Int numOfTiles, int cellSize)
         {
+            _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, cellSize * numOfTiles.y);
             int textureWidth = numOfTiles.x * cellSize;
             int textureHeight = numOfTiles.y * cellSize;
 

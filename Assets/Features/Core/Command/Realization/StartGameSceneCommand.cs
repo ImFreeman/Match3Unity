@@ -24,8 +24,16 @@ namespace Assets.Features.Core.Command.Realization
         }
 
         public async UniTask<CommandResult> Do()
-        {                        
-            ServiceLocator.Get<GameWindowPresentor>().UpdateView();
+        {
+            var tileLayout = ServiceLocator.Get<ITileLayout>();
+            var windowPresenter = ServiceLocator.Get<GameWindowPresentor>();
+            var uiWindow = ServiceLocator.Get<IUIService>().Get<UIGameWindow>();
+            uiWindow.TilesField.GenerateBackgroundTexture(
+                new UnityEngine.Vector2Int(tileLayout.TilesLayout.Length, tileLayout.TilesLayout[0].Length),
+                (int)windowPresenter.GetTileSize().x);
+
+            
+            windowPresenter.UpdateView();
 
             return new CommandResult { Body = null, Status = CommandStatus.Success };
         }

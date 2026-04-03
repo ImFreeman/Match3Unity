@@ -129,6 +129,14 @@ public class GameWindowPresentor : IDisposable
         return new Vector2(posX, posY);
     }
 
+    public Vector2 GetTileSize()
+    {
+        var fieldWidth = _gameWindow.TilesContainer.rect.width;
+        var columnsCount = _tileLayout.TilesLayout.Length;
+        var tileWidth = fieldWidth / columnsCount;
+        return new Vector2(tileWidth, tileWidth);
+    }
+
     private void OnPauseButtonPressed(object sender, EventArgs e)
     {
         _uiService.Show<UIPauseWindow>();
@@ -155,15 +163,7 @@ public class GameWindowPresentor : IDisposable
     private void OnScoreUpdated(object sender, int e)
     {
         _gameWindow.Score = e.ToString();
-    }
-
-    private Vector2 GetTileSize()
-    {
-        var fieldWidth = _gameWindow.TilesContainer.rect.width;
-        var columnsCount = _tileLayout.TilesLayout.Length;
-        var tileWidth = fieldWidth / columnsCount;
-        return new Vector2(tileWidth, tileWidth);
-    }
+    }    
 
     private void OnTileAdded(object sender, int e)
     {
