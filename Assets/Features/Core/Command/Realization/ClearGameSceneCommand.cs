@@ -1,5 +1,4 @@
-﻿using Assets.Features.Core.ServiceLocatorScript;
-using Assets.Features.GameLogic.Scripts.Interfaces;
+﻿using Assets.Features.GameLogic.Scripts.Interfaces;
 using Assets.Features.GameLogic.Scripts.Realization;
 using Assets.Features.Tile.Scripts.Interfaces;
 using Assets.Features.Tile.Scripts.Realization;
@@ -8,21 +7,12 @@ using Assets.Features.UI.GameOverPopUp.Scripts;
 using Assets.Features.UI.PauseWindow.Scripts;
 using Assets.Features.UI.UIGraphicElement.Scripts.Interfaces;
 using Cysharp.Threading.Tasks;
-using System;
 
 namespace Assets.Features.Core.Command.Realization
 {
-    public class ClearGameSceneCommand : ICommand
+    public class ClearGameSceneCommand : BaseClearSceneCommand
     {
-        public void Cancel()
-        {
-        }
-
-        public void Dispose()
-        {
-        }
-
-        public UniTask<CommandResult> Do()
+        public override UniTask<CommandResult> Do()
         {
             DisposeService<GameFlow>();
             DisposeService<GameOverPopUpPresentor>();
@@ -51,16 +41,6 @@ namespace Assets.Features.Core.Command.Realization
             DisposeService<IUIService>();
 
             return new UniTask<CommandResult>(new CommandResult() { Body = null, Status = CommandStatus.Success });
-
-        }
-
-        private void DisposeService<T>() where T : class, IDisposable
-        {
-            if (ServiceLocator.TryGet<T>(out T service))
-            {
-                service.Dispose();
-                ServiceLocator.Unregister<T>();
-            }
         }
     }
 }

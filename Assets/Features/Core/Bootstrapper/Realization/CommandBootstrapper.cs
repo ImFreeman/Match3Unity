@@ -14,20 +14,16 @@ namespace Assets.Features.Core.Bootstrapper.Realization
         private ICommand _currentCommand;
         private CancellationTokenSource _cts;
         private bool _isExecuting;
-        private bool _disposed;
-        private readonly object _lock = new object();        
+        private bool _disposed;       
         
         public void Dispose()
         {
             if (_disposed) return;
             _disposed = true;
             Cancel();
-            lock (_lock)
+            while (_commandQueue.Count > 0)
             {
-                while (_commandQueue.Count > 0)
-                {
-                    _commandQueue.Dequeue().Dispose();
-                }
+                _commandQueue.Dequeue().Dispose();
             }
             _cts?.Dispose();
         }
@@ -35,20 +31,14 @@ namespace Assets.Features.Core.Bootstrapper.Realization
         public void AddCommand(ICommand command)
         {
             if (command == null) throw new ArgumentNullException(nameof(command));
-            lock (_lock)
-            {
-                _commandQueue.Enqueue(command);
-            }
+            _commandQueue.Enqueue(command);
         }
         
         public async UniTask ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            lock (_lock)
-            {
-                if (_isExecuting)
-                    throw new InvalidOperationException("Execution already in progress");
-                _isExecuting = true;
-            }
+            if (_isExecuting)
+                throw new InvalidOperationException("Execution already in progress");
+            _isExecuting = true;
 
             _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
@@ -57,12 +47,9 @@ namespace Assets.Features.Core.Bootstrapper.Realization
                 while (true)
                 {
                     ICommand command = null;
-                    lock (_lock)
-                    {
-                        if (_commandQueue.Count == 0)
-                            break;
-                        command = _commandQueue.Dequeue();
-                    }
+                    if (_commandQueue.Count == 0)
+                        break;
+                    command = _commandQueue.Dequeue();
 
                     if (_cts.Token.IsCancellationRequested)
                     {
@@ -105,10 +92,7 @@ namespace Assets.Features.Core.Bootstrapper.Realization
             }
             finally
             {
-                lock (_lock)
-                {
-                    _isExecuting = false;
-                }
+                _isExecuting = false;
                 _cts?.Dispose();
                 _cts = null;
             }

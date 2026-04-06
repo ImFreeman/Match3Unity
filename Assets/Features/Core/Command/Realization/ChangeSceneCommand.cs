@@ -1,19 +1,14 @@
-﻿using Assets.Features.Core.ServiceLocatorScript;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+using System.Threading;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Features.Core.Command.Realization
 {
     public class ChangeSceneCommand : ICommand
     {
-        private int _sceneId;
-
+        private readonly int _sceneId;
+        private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         public ChangeSceneCommand(int sceneId)
         {
             _sceneId = sceneId;
@@ -21,19 +16,32 @@ namespace Assets.Features.Core.Command.Realization
 
         public void Cancel()
         {
-            
+            _tokenSource.Cancel();
         }
 
         public void Dispose()
         {
-            
+            _tokenSource.Cancel();
+            _tokenSource = null;
         }
 
-        public UniTask<CommandResult> Do()
+        public async UniTask<CommandResult> Do()
         {
-            SceneManager.LoadSceneAsync(_sceneId).GetAwaiter();
+            try
+            {
+                await SceneManager.LoadSceneAsync(_sceneId).ToUniTask(cancellationToken: _tokenSource.Token);
+            }
+            catch (Exception ex)
+            {
+                return new CommandResult() { Body = ex, Status = CommandStatus.Failed };
+            }
 
-            return new UniTask<CommandResult>(new CommandResult() { Body = null, Status = CommandStatus.Success });
+            if(_tokenSource.IsCancellationRequested)
+            {
+                return new CommandResult() { Body = null, Status = CommandStatus.Canceled };
+            }
+
+            return new CommandResult() { Body = null, Status = CommandStatus.Success };            
         }
     }
 }
